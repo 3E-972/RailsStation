@@ -1,0 +1,148 @@
+/**
+ * The first file of the demonstration site for the AAdPdP
+ *
+ * This file show mainly how to handle complex rights for not-too-hard
+ * dispatching and parameter checking.
+ *
+ * This file defines the Zone /plumbers
+ *
+ */
+
+{
+	/** You can handle access rights very conveniently.
+	 * Here, rights are applied to HTTP Verbs of a Zone.
+	 */
+	"access": {
+		/* You can use a pipe for an union of accepted roles */
+		"default|client":	"GET",
+		"plumber":	[ "GET", "POST"],
+		"admin":		[ "GET", "POST", "DEL" ]
+	},
+
+	/** Customize the error comportment
+	 * The digit '0' is a wildcard for it's decade, so 0 is a wildcard.
+	 */
+	"error":{
+		"401": "static/401.html",
+		"404": "static/404.html",
+		"500": "static/500.html",
+		"0"  : "static/error.html" 
+	},
+
+	/** Specify where the functions are located, subzones inherits this but can also override it */
+	"require": { "Plumbers": "controllers/plumbers" },
+
+	/** Handle requests with the HTTP verb */
+	"get": {
+		"function": "Plumbers.get",
+		"params": []
+	},
+
+	"post": {
+		"function": "Plumbers.add",
+		/** Specifying parameters will enable the parameter checking
+		 * Each parameter has the following properties:
+		 *	name: the key we will look for
+		 *	type: (optional, default: string) a JS type we can check to
+		 *	source: {POST|GET|URL} where we search for the key
+		 *	check: {FUNCTION|ARRAY} (optional) functions applied to the parameter, must return a boolean
+		 *	pre-translate: {FUNCTION} (optional) applied before anything
+		 *	post-translate: {FUNCTION} (optional) applied after check
+		 */
+		"params": [
+				{ "name": "uid", "type": "numeric", "source": "POST", "check": "Helpers.uid" },
+				{ "name": "name", "source": "POST" },
+				// Catalog.LastName, here, is a special normalized string translated with pre-translate.
+				{ "name": "lastname", "type": "Catalog.LastName", "source": "POST", "pre-translate": "Catalog.fromString" }
+			]
+	},
+
+	/** You can specify subzones. Here it's /plumbers/list */
+	"/list": {
+		/** And you can use the access property for applying a role dispatching
+		 * Here, we assume that:
+		 * - Some plumbers don't want to be publicly listed, so clients have a filtered list
+		 * - Identified Plumbers can see all plumbers
+		 * - The admin don't care of Plumbers that are not registered to his DB
+		 *
+		 * For every role not listed, as no function is provided directly in the
+		 * get property, the access is denied.
+		 * If you provide a function, it will become the default fallback.
+		 *
+		 * Also, note that we could have given a parameters checking in the access
+		 * but listing functions doesn't take parameters so we gave the function
+		 * names directly.
+		 */
+		"get": {
+			"access": {
+				"client": "Plumbers.getPublicList",
+				"plumber": "Plumbers.getFullList",
+				"admin": "Plumbers.getRegisteredPlumbers"
+			}
+		}
+	},
+
+	// The query subzone will show the power of parameters dispatching
+	// The main idea is to provide a nice endpoint for querying the database
+	"/query": {
+		/** Access can also be global to the zone. If so, these rights are also
+		 * applied to the subzone.
+		 * @note that the bang '!' invert the masking, here it's a shortcut for "client|plumber|admin"
+		 */
+		"access": "!default",
+		/** Don't forget to versionning the part of the API which can change !
+		 * Railstation will handle the version number and insert it in the URL
+		 */
+		"version": 1,
+
+		/** You can always add new modules in dependencies */
+		"require": {
+			"Query" : "controllers/query/plumbers",
+			"Errors": "generators/plumbers/error"
+		},
+
+		/** For the querying interface we want to change the error page.
+		 * We want a dynamic error page, depending of the request and its error.
+		 * For that, we will use functions.
+		 * TODO: using templating server side ?
+		 *
+		 * For the sake of simplicity, we only handle 404 and 500
+		 */
+		"error": {
+			"404": "Errors.queryUnknown",
+			"500": "Errors.queryError"
+		},
+
+		"get": [
+			/** Specifying a list in the HTTP Verb activate the parameter dispatching
+			 * Precedence is: first declared is prioritary.
+			 * Warning: no parameter *is* *no* parameter ! If you want a wildcard,
+			 * add the wildcard:true property.
+			 * If two wildcard are specified, only the last one will be used
+			 */
+				{ "function": "Query.byName",
+					"params":  [ { "name": "name", "type":"string", "source": "GET"}]
+				}, {
+					"function": "Query.byId",
+					"params": [ { "name": "uid", "type":"numeric", "source": "GET", "check":"Helpers.uid" }]
+				}, {
+					// By default, give the Plumbers available tomorrow
+					"function": "Query.getAvailableTomorow",
+					"params": [],
+					"wildcard": true
+				}, {
+					"function": "Query.getAvailableByDay",
+					"params": [ { "name": "day", "type":"Date", "source":"GET", "pre-translate":"Date.parseString"}]
+				}
+			],
+
+		/** Like in express, you can specify parameters by URL, note that :uid is sourced in the get parameters */
+		"/:uid": {
+			"get": {
+				"function": "Plumbers.getByUid",
+				"params": [ {"name": "uid", "source": "URL", "type":"numeric", "check": "Helpers.uid"}]
+			}
+		}
+	}
+
+}

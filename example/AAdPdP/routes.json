@@ -1,0 +1,43 @@
+{
+	/* Declaring Roles enable the right management and uses Passport */
+	"roles": [
+		/**
+		 * You can specify a default role, which is applicable to everyone as long
+		 * as no other role is found.
+		 * If no default role is provided, 401 is returned for every unauth request
+		 */
+		{ "name": "default"},
+		/** everyone is also a special role that can be handy for rights. */
+		{ "name": "everyone"},
+		/**
+		 * You can (and should) specify your own roles
+		 * Roles have a name and a function typed like so: (Passport req -> boolean)
+		 * If no function is given, you'll have to assign the role yourself with the
+		 * API
+		 */
+		{ "name": "client",		"check": "Auth.isAuthenticated"},
+		{ "name": "plumber",	"check": "Auth.isPlumber"},
+		/**
+		 * Sometimes you want roles to be cummulative (default is false)
+		 * Here, a plumber can also be an admin (or a default, or a client)
+		 * The special role "everyone" is always cumulative
+		 *
+		 * When roles are cumulative, the last specified role has the highest
+		 * precedeance. You can change the precedance with the precedance property
+		 * TODO document precedence calculus
+		 */
+		{ "name": "admin",		"check": "Auth.isAdmin", "cummulative": true }
+		],
+
+	/**
+	 * Zones are declared with an URL beginning with a '/'
+	 * Basically, it's just an endpoint of your API
+	 *
+	 * Zones are objects, but objects can be heavy. That's why if you specify
+	 * a String, RailStation will understand it as a path to a CommonJS module so
+	 * you can organize the declaration of your API in multiple files.
+	 */
+	"/plumbers": "routes/plumbers.json",	// This file will be about: rights managements, parameters checking, basic dispatching
+	"/pages": "routes/pages.json",				// This file will be about: output type dispatching, templating, named URL, complex redirections
+	"/appointments": "routes/appointments.json" // TODO
+}

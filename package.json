@@ -1,0 +1,36 @@
+{
+  "name": "RailStation",
+  "version": "0.0.1",
+  "description": "API manager for Express and Passport",
+  "main": "src/index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/mackwic/RailStation.git"
+  },
+  "keywords": [
+    "express",
+    "passport",
+    "api",
+    "manager",
+    "railstation",
+    "station"
+  ],
+  "author": "Thomas Wickham <thomas@wickham.epimeros.org",
+  "license": "GPLv2",
+  "readmeFilename": "README.markdown",
+  "bugs": {
+    "url": "https://github.com/mackwic/RailStation/issues"
+  },
+
+  "dependencies": {
+    "express": "~3.2.4",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6"
+  }
+}
