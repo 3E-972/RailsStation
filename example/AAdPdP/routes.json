@@ -9,34 +9,37 @@
 	"require": { "Auth": "controllers/auth"},
 
 	/* Declaring Roles enable the right management and uses Passport */
-	"roles": [
+	"roles": {
 		/**
 		 * You can specify a default role, which is applicable to everyone as long
 		 * as no other role is found.
 		 * If no default role is provided, 401 is returned for every unauth request
 		 */
-		{ "name": "default"},
+		"default": true,
 		/** everyone is also a special role that can be handy for rights. */
-		{ "name": "everyone"},
+		"everyone": true,
 		/**
 		 * You can (and should) specify your own roles
 		 * Roles have a name and a function typed like so: (Passport req -> boolean)
 		 * If no function is given, you'll have to assign the role yourself with the
 		 * API
 		 */
-		{ "name": "client",		"check": "Auth.isAuthenticated"},
-		{ "name": "plumber",	"check": "Auth.isPlumber"},
+		"client": "Auth.isAuthenticated",
+		"plumber": "Auth.isPlumber",
 		/**
 		 * Sometimes you want roles to be cummulative (default is false)
 		 * Here, a plumber can also be an admin (or a default, or a client)
 		 * The special role "everyone" is always cumulative
 		 *
+		 * Except for the special role "everyone", you declare a cummulative role by
+		 * prepending its name by a '+'
+		 *
 		 * When roles are cumulative, the last specified role has the highest
 		 * precedeance. You can change the precedance with the precedance property
 		 * TODO document precedence calculus
 		 */
-		{ "name": "admin",		"check": "Auth.isAdmin", "cummulative": true }
-		],
+		"+admin": "Auth.isAdmin"
+	},
 
 	/**
 	 * Zones are declared with an URL beginning with a '/'
