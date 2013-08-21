@@ -29,7 +29,6 @@
 		"0"  : "static/error.html" 
 	},
 
-	/** Specify where the functions are located, subzones inherits this but can also override it */
 	"require": { "Plumbers": "controllers/plumbers" },
 
 	/** Handle requests with the HTTP verb */
