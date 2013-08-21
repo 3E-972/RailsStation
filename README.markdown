@@ -7,6 +7,10 @@ Railstation is closely coupled with Express (Light routing for Node) and Passpor
 
 It aim to provide a large range of wide-level features for easy and intelligent routing.
 
+Warning ! RailStation is *not* a connect middleware like Express and Passport but it uses them.You always need to put them in your middleware stack.
+
+Take care to place Passport before Express.
+
 FEATURES
 ========
 
