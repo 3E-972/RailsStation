@@ -1,10 +1,11 @@
 {
   "name": "RailStation",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "API manager for Express and Passport",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "directories": {
-    "example": "example"
+    "example": "example",
+		"lib": "lib"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,7 +22,7 @@
     "railstation",
     "station"
   ],
-  "author": "Thomas Wickham <thomas@wickham.epimeros.org",
+  "author": "Thomas Wickham <thomas@wickham.epimeros.org>",
   "license": "GPLv2",
   "readmeFilename": "README.markdown",
   "bugs": {
