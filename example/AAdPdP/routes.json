@@ -1,4 +1,13 @@
 {
+	/**
+	 * Use require to specify where the functions are located, subzones inherits this AND can
+	 * override it.
+	 *
+	 * You can add requires at every moment, so you can keep your modules near
+	 * their usage.
+	 */
+	"require": { "Auth": "controllers/auth"},
+
 	/* Declaring Roles enable the right management and uses Passport */
 	"roles": [
 		/**
