@@ -20,13 +20,13 @@
 	},
 
 	/** Customize the error comportment
-	 * The digit '0' is a wildcard for it's decade, so 0 is a wildcard.
+	 * The digit '0' is a wildcard for it's own decade, excepting the string `000`
+	 * that NOT wildcard all HTTP codes because it's BAD
 	 */
 	"error":{
-		"401": "static/401.html",
+		"400": "static/400.html",
 		"404": "static/404.html",
 		"500": "static/500.html",
-		"0"  : "static/error.html" 
 	},
 
 	"require": { "Plumbers": "controllers/plumbers" },
