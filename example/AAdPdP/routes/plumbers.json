@@ -64,21 +64,43 @@
 		 * - Identified Plumbers can see all plumbers
 		 * - The admin don't care of Plumbers that are not registered to his DB
 		 *
-		 * For every role not listed, as no function is provided directly in the
-		 * get property, the access is denied.
-		 * If you provide a function, it will become the default fallback.
+		 * We showed the admin declaration in its verbose form for the sake of
+		 * completeness.
 		 *
-		 * Also, note that we could have given a parameters checking in the access
-		 * but listing functions doesn't take parameters so we gave the function
-		 * names directly.
+		 * For every role not listed, **the access is denied**.
+		 *
+		 * @note that we used a shortcut: functions could have parameters
+		 * checking. In this case use the traditional verbose form with an access
+		 * property. (see the last)
+		 *
+		 * @note that this second form of access is function-wide. So, zone-wide
+		 * accesses have highest priority on them.
+		 * ex:
+		 *````js
+				{
+					"/example": {
+						// We don't give GET access
+						"access": { "everyone": "POST" },
+						// So **NO** get will be accepted, even with the access property in the function
+						"get": { "access": "everyone", "function": "Will.not.be.called" }
+					}
+				}
+			````
 		 */
-		"get": {
-			"access": {
-				"client": "Plumbers.getPublicList",
-				"plumber": "Plumbers.getFullList",
-				"admin": "Plumbers.getRegisteredPlumbers"
+		"get": [
+			{
+				"access": {
+					"client": "Plumbers.getPublicList",
+					"plumber": "Plumbers.getFullList"
+				}
+			},
+			{
+				// This should be defined before, with plumbers and clients, but has been
+				// manually desugarised for better understanding
+				"function": "Plumbers.getRegistered",
+				"access": "admin"
 			}
-		}
+		]
 	},
 
 	// The query subzone will show the power of parameters dispatching
